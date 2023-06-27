@@ -28,14 +28,14 @@ language.code: ko
 # DB Connection
 datasource:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:15432/smart_city
+  url: jdbc:postgresql://postgis:5432/smart_city
   username: postgres
   password: postgres
 
   secondary:
     use.yn: Y
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:15432/smart_city
+    url: jdbc:postgresql://postgis:5432/smart_city
     username: postgres
     password: postgres
 
@@ -53,10 +53,10 @@ datacore:
           level: 3
 
 datamanager:
-  url: http://localhost:8080
+  url: http://data-manager:8080
 
 ingestinterface:
-  url: http://localhost:8081
+  url: http://ingest-interface:8081
 
 cityhub:
   client:

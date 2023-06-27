@@ -5,6 +5,9 @@
     <springProfile name="default | local">
         <property resource="application-local.yml" />
     </springProfile>
+    <springProfile name="docker">
+        <property resource="application-docker.yml" />
+    </springProfile>
     <springProfile name="dev">
         <property resource="application-dev.yml" />
     </springProfile>
@@ -48,17 +51,7 @@
         <appender-ref ref="ERROR_FILE_APPENDER" />
     </appender>
 
-    <springProfile name="default | local">
-        <logger name="com.re.keti.sc" level="DEBUG" />
-        <logger name="kafkaRequestErrorLogger" level="INFO">
-            <appender-ref ref="ASYNC_ERROR_FILE_APPENDER" />
-        </logger>
-        <root level="INFO">
-            <appender-ref ref="ASYNC_FILE_APPENDER" />
-            <appender-ref ref="CONSOLE" />
-        </root>
-    </springProfile>
-    <springProfile name="dev">
+    <springProfile name="default | local | docker | dev">
         <logger name="com.re.keti.sc" level="DEBUG" />
         <logger name="kafkaRequestErrorLogger" level="INFO">
             <appender-ref ref="ASYNC_ERROR_FILE_APPENDER" />

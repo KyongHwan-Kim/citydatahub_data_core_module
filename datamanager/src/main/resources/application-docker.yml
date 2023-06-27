@@ -13,20 +13,20 @@ logging.base.dir: logs
 # DB연결 정보
 datasource:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:15432/smart_city
+  url: jdbc:postgresql://postgis:5432/smart_city
   username: postgres
   password: postgres
 
   secondary:
     use.yn: Y
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:15432/smart_city
+    url: jdbc:postgresql://postgis:5432/smart_city
     username: postgres
     password: postgres
 
 # 카프카 설정
 kafka:
-  url: localhost:9092
+  url: broker:29092
   message.version: 1.0
   security.yn: N
   security.protocol: SASL_PLAINTEXT
@@ -81,7 +81,7 @@ http.pool:
 
 rest:
   proxy:
-    url: http://localhost:18082
+    url: http://rest-proxy:8082
     partitions:
       count: 1
     replication:

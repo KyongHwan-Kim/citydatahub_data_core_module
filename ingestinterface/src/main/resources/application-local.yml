@@ -3,7 +3,7 @@ spring:
     name: dh-datacore-ingest-interface
 
 server:
-  port: 443
+  port: 8443
 
   http2:
     enabled: true
@@ -26,14 +26,14 @@ logging.base.dir: logs
 # DB연결 정보
 datasource:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://postgis:5432/smart_city
+  url: jdbc:postgresql://localhost:15432/smart_city
   username: postgres
   password: postgres
 
   secondary:
     use.yn: Y
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://postgis:5432/smart_city
+    url: jdbc:postgresql://localhost:15432/smart_city
     username: postgres
     password: postgres
 
@@ -45,9 +45,9 @@ bulk:
 
 # 카프카 설정
 kafka:
-  url: broker:29092
+  url: localhost:9092
   message.version: 1.0
-  security.yn: Y
+  security.yn: N
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
   username: test
@@ -77,7 +77,7 @@ eureka:
     prefer-ip-address: true
 
   client:
-    enabled: true
+    enabled: false
     register-with-eureka: true
     fetch-registry: true
     service-url:

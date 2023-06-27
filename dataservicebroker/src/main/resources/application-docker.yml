@@ -13,27 +13,27 @@ logging.base.dir: logs
 # DB연결 정보
 datasource:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:15432/smart_city
+  url: jdbc:postgresql://postgis:5432/smart_city
   username: postgres
   password: postgres
 
   secondary:
     use.yn: Y
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:15432/smart_city
+    url: jdbc:postgresql://postgis:5432/smart_city
     username: postgres
     password: postgres
 
   hive:
     use.yn: Y
     driverClassName: org.apache.hive.jdbc.HiveDriver
-    url: jdbc:hive2://localhost:10000/default
+    url: jdbc:hive2://thrift:10000/default
     username: root
     password:
     baseDirPath: /user/hive/warehouse
 
   hbase:
-    phoenixUrl: jdbc:phoenix:localhost:2189:/hbase
+    phoenixUrl: jdbc:phoenix:zoo1:2181:/hbase
     xmlPath:
 
 # ingestRequest 데이터 벌크처리 쓰레드 설정
@@ -44,7 +44,7 @@ bulk:
 
 # 카프카 설정
 kafka:
-  url: localhost:9092
+  url: broker:29092
   message.version: 1.0
   security.yn: N
   security.protocol: SASL_PLAINTEXT

@@ -13,7 +13,7 @@
 
     <groupId>kr.re.keti.sc</groupId>
     <artifactId>ingest-interface</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <name>ingest-interface</name>
     <description>City data hub data core module - ingest interface application</description>
 

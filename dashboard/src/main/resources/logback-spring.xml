@@ -6,6 +6,9 @@
 	 <springProfile name="default | local">
     	<property resource="application-local.yml"/>
     </springProfile>
+    <springProfile name="docker">
+        <property resource="application-docker.yml"/>
+    </springProfile>
     <springProfile name="dev">
         <property resource="application-dev.yml"/>
     </springProfile>
@@ -34,20 +37,12 @@
         <appender-ref ref="FILE_APPENDER" />
     </appender>
     
-    <springProfile name="default | local">
+    <springProfile name="default | local | docker | dev">
         <logger name="com.re.keti.sc" level="DEBUG" />
         
         <root level="INFO">
             <appender-ref ref="ASYNC_FILE_APPENDER" />
             <appender-ref ref="CONSOLE" />
-        </root>
-    </springProfile>
-
-    <springProfile name="dev">
-        <logger name="com.re.keti.sc" level="DEBUG" />
-        
-        <root level="INFO">
-            <appender-ref ref="ASYNC_FILE_APPENDER" />
         </root>
     </springProfile>
 
