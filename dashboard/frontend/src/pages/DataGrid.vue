@@ -23,7 +23,7 @@
                     id="inline-form-input-name"
                     class="mb-2 mr-sm-2 mb-sm-0"
                     :placeholder="$i18n.t('search.provideKeyword')"
-                    v-model="searchValue"
+                    v-model="validatedSearchValue"
                     :disabled="isDisabledSearch"
                   ></b-form-input>
                   <el-button size="small" type="info" @click="handleShowPopup" v-if="keywordIsEmpty && !isBtnLoading">{{ $t('search.options') }}</el-button>
@@ -349,6 +349,21 @@ export default {
   computed: {
     keywordIsEmpty() {
       return !this.searchValue || this.searchValue === '';
+    },
+
+    validatedSearchValue: {
+      get() {
+        return this.searchValue;
+      },
+      set(newValue) {
+        // 공백만 있는 문자열을 제거
+        newValue = newValue.trim();
+
+        // 문자열과 숫자만 가능하도록 정규식을 이용하여 필터링
+        newValue = newValue.replace(/[^a-z0-9]/gi, '');
+
+        this.searchValue = newValue;
+      }
     }
   },
   methods: {

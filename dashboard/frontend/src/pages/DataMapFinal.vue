@@ -108,6 +108,7 @@
                 <div class="col-xl-4">
                   <div class="text-right mt-2 mb-2">
                     <el-button size="small" type="info" :disabled="this.subscribeList.length == 0" @click="goSubscriptions(true)">{{ $t('search.subscribe') }}</el-button>
+
                     <!-- Fetch Historical Data [기록 데이터 가져오기] -->
                     <el-button size="small" type="info" :disabled="!this.params.id" @click="goHistoryView">{{ $t('search.fetchHistoricalData') }}</el-button>
                   </div>
@@ -165,7 +166,7 @@
           id="inline-form-input-name"
           class="mb-2 mr-sm-2 mb-sm-0"
           :placeholder="$i18n.t('search.provideKeyword')"
-          v-model="searchValue"
+          v-model="validatedSearchValue"
         ></b-form-input>
       </template>
       <template v-slot:tree>
@@ -216,7 +217,7 @@
           type="primary"
           @click="handleSave"
           size="small"
-          v-show="isSelectDisabled"
+          v-show="!keywordIsEmpty || isSelectDisabled"
         >
           {{ $t('comm.save') }}
         </el-button>
@@ -234,7 +235,7 @@
       </template>
     </SearchConfiguration>
 
-<!--dialogVisible2 마커를 눌렀을 때 나오는 다이얼로그, 상세정보-->
+    <!--dialogVisible2 마커를 눌렀을 때 나오는 다이얼로그, 상세정보-->
     <el-dialog
       title="Model Attribute"
       :visible.sync="dialogVisible2"
@@ -311,6 +312,23 @@ export default {
     keywordIsEmpty() {
       return !this.searchValue || this.searchValue === '';
     },
+
+    validatedSearchValue: {
+      get() {
+        return this.searchValue;
+      },
+      set(newValue) {
+        // 공백만 있는 문자열을 제거
+        newValue = newValue.trim();
+
+        // 문자열과 숫자만 가능하도록 정규식을 이용하여 필터링
+        newValue = newValue.replace(/[^a-z0-9]/gi, '');
+
+        this.searchValue = newValue;
+      }
+    }
+
+
   },
   beforeMount () {
     axios.get('/getapikey')
@@ -328,8 +346,6 @@ export default {
   // },
   data () {
     return {
-      modelSelected: false,
-      searchChecked: false,
       gridSize: 0,
       googleMap: null,
       lastShape: null,
@@ -555,6 +571,7 @@ export default {
       this.gridData = []; // init entity id list
       this.$refs.tuiGrid1.invoke('resetData', this.gridData);
     },
+
     setTypeParams(type) {
       const typeParams = [];
       this.dynamicTags.forEach(value => {
@@ -637,6 +654,7 @@ export default {
     handleTagClose(tag) {
       this.dataModels.forEach(item => {
         if (item.value === tag) {
+          this.modelSelected = false;
           return item.disabled = false;
         }
       });
@@ -645,6 +663,7 @@ export default {
 
     },
     handleClose() {
+      this.modelSelected = false;
       this.dialogVisible = false;
       this.dialogVisible2 = false;
       this.isSelectDisabled = false;
@@ -696,6 +715,7 @@ export default {
       this.dynamicQuery = {};
       this.visible3 = false;
       this.displayAttribute[this.attributeValue] = null;
+      this.modelSelected = false;
       this.attributeValue = null;
     },
     searchRemove(id, index) {
@@ -833,7 +853,6 @@ export default {
     },
     goHistoryView() {
       // console.log(this.params);
-
       if (!this.params.id) {
         // this.$alert(this.$i18n.t('message.clickItem', [this.$i18n.t('search.entityID')]));
         return null;
@@ -841,7 +860,7 @@ export default {
       this.$router.push({ path: '/mapSearchHistorical', query: this.params});
     },
     updateCoordinates(location) {
-      console.log(location);
+      // console.log(location);
     },
     updateEdited(event) {
       const ne = event.getNorthEast();
@@ -888,8 +907,11 @@ export default {
     },
     // 모델 선택 시
     onDataModelChange(value) {
-      dataModelApi.attributes({dataModelId: value, typeUri: null}).then(data => this.treeData = data).catch((err) => null);
-      this.modelSelected = true;
+      dataModelApi.attributes({dataModelId: value, typeUri: null}).
+        then(data =>
+          this.treeData = data,
+          this.modelSelected = true)
+          .catch((err) => null);
     },
     onChecked(event) {
       // all check
@@ -994,7 +1016,6 @@ export default {
         operator: null,
         value: null
       });
-        console.error(this.addList);
     },
     goSubscriptions(isAlert) {
       this.$http.post('/subscriptions', this.subscribeList)
@@ -1052,6 +1073,7 @@ export default {
 
       this.isInfoWindow = false;
 
+      // 마커 찍는 부분
       const typeParams = this.setTypeParams('search');
 
       const url = [
@@ -1093,34 +1115,17 @@ export default {
 
           // init marker info
           this.markers = [];
-          // 데이터를 담을 배열을 초기화
           const data = [];
-
-          // 주어진 객체(obj) 내에서 GeoProperty 타입을 가지는 첫번째 속성을 찾아 해당 속성을 기반으로 마커를 생성하는 함수
-          function createFirstMarkerFromGeoProperty(obj, resultItem) {
-            let marker = null;
-
-            Object.keys(obj).some(key => {
-              if (obj[key] && obj[key].type === 'GeoProperty') {
-                const { coordinates } = obj[key].value;
-                marker = {
-                  position: {
-                    lat: coordinates[1],
-                    lng: coordinates[0],
-                  },
-                  mapInfo: resultItem,
-                  displayValue: resultItem.displayValue,
-                  icon: resultItem.icon
-                };
-                return true;
-              } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-                marker = createFirstMarkerFromGeoProperty(obj[key], resultItem);
-                if (marker) {
-                  return true;
+          // marker info setting
+          items.map(item => {
+            item.commonEntityVOs.map(resultItem => {
+              iconData.map((item2, index) => {
+                if (item2.type === resultItem.type) {
+                  resultItem['icon'] = item2.icon
                 }
-              }
-              return false;
+              });
             });
+          });
 
           items.map(item => {
             item.commonEntityVOs.map(resultItem => {
