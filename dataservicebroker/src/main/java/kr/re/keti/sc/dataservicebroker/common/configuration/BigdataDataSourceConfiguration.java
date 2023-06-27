@@ -24,6 +24,7 @@ import kr.re.keti.sc.dataservicebroker.entities.sqlprovider.hive.HiveEntitySqlPr
  * Bigdata 접속 설정 클래스
  */
 @Configuration
+
 @EnableTransactionManagement
 @MapperScan(value = "kr.re.keti.sc.dataservicebroker.entities.sqlprovider.hive", sqlSessionFactoryRef = "hiveSqlSessionFactory")
 @ConditionalOnProperty(value="datasource.hive.use.yn", havingValue = "Y", matchIfMissing = false)
@@ -50,6 +51,8 @@ public class BigdataDataSourceConfiguration {
 		dataSource.setPassword(hiveJdbcPassword);
 		dataSource.setMinIdle(10);
 
+		// dataSource.setPoolPreparedStatements(true);
+		// dataSource.setMaxOpenPreparedStatements(100);
 		return dataSource;
 	}
 	

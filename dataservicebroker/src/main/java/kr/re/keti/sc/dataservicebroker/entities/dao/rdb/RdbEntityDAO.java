@@ -1054,7 +1054,11 @@ public class RdbEntityDAO implements EntityDAOInterface<DynamicEntityDaoVO> {
         RdbEntitySqlProvider mapper = retrieveSqlSession.getMapper(RdbEntitySqlProvider.class);
         return (Integer) mapper.selectHistCount(dbConditionVO);
     }
-
+    /**
+     * 빅데이터 용 Refresh Table
+     */
+    @Override
+    public void refreshTable(String tableName){}
     /**
      * select 조건 생성
      * @param queryVO

@@ -31,6 +31,7 @@ import kr.re.keti.sc.dataservicebroker.common.code.DataServiceBrokerCode.BigData
 import kr.re.keti.sc.dataservicebroker.common.code.DataServiceBrokerCode.DefaultAttributeKey;
 import kr.re.keti.sc.dataservicebroker.common.code.DataServiceBrokerCode.DefaultDbColumnName;
 import kr.re.keti.sc.dataservicebroker.common.code.DataServiceBrokerCode.HistoryStoreType;
+import kr.re.keti.sc.dataservicebroker.common.code.DataServiceBrokerCode.Operation;
 import kr.re.keti.sc.dataservicebroker.common.code.DataServiceBrokerCode.PropertyKey;
 import kr.re.keti.sc.dataservicebroker.common.code.DataServiceBrokerCode.UseYn;
 import kr.re.keti.sc.dataservicebroker.common.exception.ngsild.NgsiLdBadRequestException;
@@ -94,16 +95,16 @@ public class HiveEntitySVC extends DefaultEntitySVC {
         List<DynamicEntityDaoVO> createFullHistoryTargetVOList = new ArrayList<>();
 
         StringBuilder logMessage = new StringBuilder();
-
+        String entityTableName = null;
         for (EntityProcessVO<DynamicEntityFullVO, DynamicEntityDaoVO> entityProcessVO : entityProcessVOList) {
 
             DynamicEntityDaoVO entityDaoVO = entityProcessVO.getEntityDaoVO();
             ProcessResultVO processResultVO = entityProcessVO.getProcessResultVO();
-
-            // 2. 실패 항목은 이력저장에서 제외
-            if (!processResultVO.isProcessResult()) {
+            // 2. 실패 항목과 Delete는 이력저장에서 제외
+            if (!processResultVO.isProcessResult() || processResultVO.getProcessOperation().name().equals(Operation.DELETE_ENTITY.name())) {
                 continue;
             }
+            entityTableName = entityDaoVO.getDbTableName();
 
             if (logMessage.length() == 0) {
                 logMessage.append(entityProcessVO.getDatasetId()).append(" Process SUCCESS");
@@ -238,6 +239,14 @@ public class HiveEntitySVC extends DefaultEntitySVC {
                 entityDAO.bulkCreateFullHist(createFullHistoryTargetVOList);
             } catch (Exception e) {
                 log.error("Store entity FULL history error", e);
+            }
+        }
+        // Table Refresh
+        if(entityTableName != null){
+            try{
+                entityDAO.refreshTable(entityTableName);
+            } catch (Exception e) {
+                log.error("Table Refresh error", e);
             }
         }
     }

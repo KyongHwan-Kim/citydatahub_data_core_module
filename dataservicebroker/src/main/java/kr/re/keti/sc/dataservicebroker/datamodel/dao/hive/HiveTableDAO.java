@@ -21,6 +21,12 @@ public class HiveTableDAO {
     public int createTable(String ddl) {
     	return sqlSession.update("dataservicebroker.hive.createTable", ddl);
     }
+    public int dropTable(String ddl) {
+    	return sqlSession.update("dataservicebroker.hive.dropTable", ddl);
+    }
+    public int cacheTable(String ddl) {
+    	return sqlSession.update("dataservicebroker.hive.cacheTable", ddl);
+    }
 
     public int updateTableScheme() {
         return sqlSession.update("dataservicebroker.hive.updateTableScheme");

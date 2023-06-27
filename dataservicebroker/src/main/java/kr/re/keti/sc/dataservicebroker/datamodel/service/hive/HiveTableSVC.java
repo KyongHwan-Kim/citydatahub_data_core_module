@@ -35,12 +35,21 @@ public class HiveTableSVC {
         logger.info("HiveTableSVC createTable. ddl={}", ddl);
         return hiveDAO.createTable(ddl);
     }
+    public int dropTable(String ddl) {
+        logger.info("HiveTableSVC dropTable. ddl={}", ddl);
+        return hiveDAO.dropTable(ddl);
+    }
+    public int cacheTable(String ddl) {
+        logger.info("HiveTableSVC cacheTable. ddl={}", ddl);
+        return hiveDAO.cacheTable(ddl);
+    }
 
     public int updateTableScheme() {
         return hiveDAO.updateTableScheme();
     }
 
     private String LINE_SEPARATOR = "\n";
+    private String TEMP_TABLE_PREFIX = "_tmp";
 
     public List<String> getTableScheme(String tableName) {
         return hiveDAO.getTableScheme(tableName);
@@ -146,6 +155,24 @@ public class HiveTableSVC {
                 .append(String.join("\n, ", columnListWithoutRELY)).append(") ").append("using phoenix options (url '")
                 .append(phoenixUrl).append("', primary 'ID');");
 
+        return sql.toString();
+    }
+
+    public String getTmpTableQuery(String tableName) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(TEMP_TABLE_PREFIX).append(" AS SELECT * FROM ").append(tableName).append(" LIMIT 0;");
+        return sql.toString();
+        }
+
+    public String cacheTableQuery(String tableName) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("CACHE TABLE ").append(tableName).append(TEMP_TABLE_PREFIX).append(";");
+        return sql.toString();
+    }
+
+    public String dropTmpTableQuery(String tableName) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("DROP TABLE ").append(tableName).append(TEMP_TABLE_PREFIX).append(";");
         return sql.toString();
     }
 }

@@ -231,4 +231,9 @@ public interface EntityDAOInterface<T extends CommonEntityDaoVO> {
      * @return 이력 데이터 건수
      */
     public Integer selectHistCount(QueryVO queryVO);
+    /**
+     * 빅데이터 테이블 refresh
+     * @param tableName
+     */
+    public void refreshTable(String tableName);
 }
