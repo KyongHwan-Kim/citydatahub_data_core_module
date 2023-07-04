@@ -14,9 +14,9 @@ logging.base.dir: logs
 
 # 카프카 설정
 kafka:
-  url: localhost:9092
+  url: broker:29092
   message.version: 1.0
-  security.yn: N
+  security.yn: Y
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
   username: test
