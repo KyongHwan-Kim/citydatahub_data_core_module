@@ -5,7 +5,7 @@ Phoenix 서버는 NoSQL의 한 종류인 Hbase 위에 관계형 데이터베이�
 
 <br/>
 
-## 2.6.2 Hbase 및 Phoenix 서버 설치
+## 2.6.2 Hbase 및 Phoenix 서버 설치 
 
 본 매뉴얼은 하기의 Hbase와 Phoenix 서버의 버전을 기준으로 작성하였습니다.
 
@@ -18,8 +18,7 @@ Hbase와 Phoenix 서버를 구성할 때에는 상호 호환되는 버전을 사
 
 `참고)` Apache Phoenix Download : [https://phoenix.apache.org/download.html](https://phoenix.apache.org/download.html)
 
-
-만약 사용하고 있는 Hbase db가 존재하는 경우, 아래 `2.6.2.1 Hbase` 설정은 제외하고 `2.6.2.2 Phoenix` 설정만 진행하도록 합니다. 
+본 설치 메뉴얼에서는 Hbase Standalone으로 구성되는 설치 가이드만 제공합니다. Standalone으로 구성할 경우 Zookeeper는 Hbase 설치 시 자동으로 구성됩니다. 만약 사용하고 있는 Hbase db가 존재하는 경우, 아래 `2.6.2.1 Hbase` 설정은 제외하고 `2.6.2.2 Phoenix` 설정만 진행하도록 합니다. 
 <br/>
 
 ### 2.6.2.1 Hbase
@@ -31,7 +30,7 @@ Hbase와 Phoenix 서버를 구성할 때에는 상호 호환되는 버전을 사
     ```bash
     # /usr/local/lib 하위 경로에 Hbase tar 파일 다운로드
     cd /usr/local/lib
-    wget http://apache.mirror.cdnetworks.com/hbase/stable/hbase-2.4.17-bin.tar.gz
+    wget http://apache.mirror.cdnetworks.com/hbase/2.4.17/hbase-2.4.17-bin.tar.gz
     tar -zxvf hbase-2.4.17-bin.tar.gz 
     ```
 
@@ -51,6 +50,26 @@ Hbase와 Phoenix 서버를 구성할 때에는 상호 호환되는 버전을 사
 
     source ~/.bashrc
     ```
+
+- *[Optional] Hbase-site.xml 설정*
+  - **Hbase Standalone 설치 시, 해당 Hbase-site.xml 설정은 별도로 진행하지 않아도 됩니다.**
+  - Hbase-site.xml 경로는 `$HBASE_HOME/conf/hbase-site.xml` 에서 진행
+  - 하기의 Property List는 참고용으로 일부 설정 값만을 기재해 놓은 것이며 설치자의 환경에 따라 설정 값을 추가하거나 다르게 설정할 수 있습니다.
+  - 상세 설정은 하기의 `참고) Hbase Github`를 참고
+
+<div align="center"><b>Hbase-site Property List</b></div>
+
+  |Property|Description|Default Value| 
+  |--------|-----------|-------------|
+  |hbase.cluster.distributed|Hbase Cluster 구성 여부|false|
+  |hbase.tmp.dir|로컬 파일 시스템의 임시 디렉토리 위치|./tmp|
+  |hbase.rootdir|Hbase Region Server가 공유하는 디렉토리|-|
+  |hbase.zookeeper.quorum|Zookeeper 사용 시, 서버 목록|-|
+  |hbase.zookeeper.property.clientPort|zoo.cfg에 정의된 zookeeper client가 연결할 포트|-|
+  |zookeeper.znode.parent|Zookeeper의 Root ZNode 설정|-|
+
+`참고)` Hbase Github : [https://github.com/apache/hbase/blob/master/hbase-common/src/main/resources/hbase-default.xml](https://github.com/apache/hbase/blob/master/hbase-common/src/main/resources/hbase-default.xml)
+
 
 <br/>
 
